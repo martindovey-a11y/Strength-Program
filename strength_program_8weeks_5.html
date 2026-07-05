@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>8-Week Strength Program</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f0f;color:#e8e4de;font-family:system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.5}
+input,select,textarea,button{font-family:inherit}
+::-webkit-scrollbar{height:4px;width:4px}
+::-webkit-scrollbar-track{background:#1a1a1a}
+::-webkit-scrollbar-thumb{background:#444}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const C = {
+  black:"#0f0f0f",dark:"#1a1a1a",panel:"#242424",border:"#333",
+  iron:"#888",chalk:"#e8e4de",yellow:"#f0c430",red:"#e04040",
+  green:"#3db87a",blue:"#4a90d9"
+};
+
+const SESSIONS = {
+  A:{label:"Day A — Push",color:C.yellow,exercises:[
+    {id:"cp",name:"Seated Chest Press Machine",badge:"Primary",note:"Set seat so handles align mid-chest · full ROM · controlled return",p1:"4×6 @ RPE 8",p2:"5×3 @ RPE 8–9",rest:"2–3 min"},
+    {id:"sp",name:"Shoulder Press Machine",badge:"Secondary",note:"Seated · handles aligned with shoulders · controlled return",p1:"3×8 @ RPE 7",p2:"4×5 @ RPE 8",rest:"90 sec"},
+    {id:"idp",name:"Incline Dumbbell Press",badge:"Secondary",note:"30–45° incline",p1:"3×10 @ RPE 7",p2:"3×8 @ RPE 8",rest:"60 sec"},
+    {id:"tp",name:"Cable Tricep Pushdown",badge:"Accessory",note:"Rope or bar · full extension",p1:"3×12",p2:"3×10",rest:"60 sec"},
+    {id:"lr",name:"Lateral Raise",badge:"Accessory",note:"Strict · no momentum",p1:"3×15",p2:"3×12",rest:"45 sec"},
+  ]},
+  B:{label:"Day B — Pull",color:C.blue,exercises:[
+    {id:"dl",name:"Barbell Deadlift",badge:"Primary",note:"Conventional · brace · drive floor away",p1:"4×5 @ RPE 8",p2:"5×3 @ RPE 8–9",rest:"3 min"},
+    {id:"br",name:"Barbell Bent-Over Row",badge:"Secondary",note:"Overhand · chest supported optional",p1:"4×8 @ RPE 7",p2:"4×6 @ RPE 8",rest:"90 sec"},
+    {id:"pu",name:"Pull-Up / Lat Pulldown",badge:"Secondary",note:"Full hang → chin over bar. Use pulldown if <6 pull-ups",p1:"3×6–8",p2:"4×5–6",rest:"90 sec"},
+    {id:"fp",name:"Cable Face Pull",badge:"Accessory",note:"High anchor · external rotation",p1:"3×15",p2:"3×12",rest:"45 sec"},
+    {id:"cu",name:"Barbell / DB Curl",badge:"Accessory",note:"Controlled eccentric",p1:"3×12",p2:"3×10",rest:"45 sec"},
+  ]},
+  C:{label:"Day C — Legs",color:C.red,exercises:[
+    {id:"sq",name:"Barbell Back Squat",badge:"Primary",note:"High bar · depth to parallel or below",p1:"4×6 @ RPE 8",p2:"5×3 @ RPE 8–9",rest:"3 min"},
+    {id:"rdl",name:"Romanian Deadlift",badge:"Secondary",note:"Hip hinge · slight knee bend · feel hamstring",p1:"3×10 @ RPE 7",p2:"4×8 @ RPE 8",rest:"90 sec"},
+    {id:"bss",name:"Bulgarian Split Squat",badge:"Secondary",note:"Dumbbell · rear foot elevated",p1:"3×10 each",p2:"3×8 each",rest:"90 sec"},
+    {id:"lc",name:"Leg Curl (Machine)",badge:"Accessory",note:"Slow eccentric (3 sec down)",p1:"3×12",p2:"3×10",rest:"60 sec"},
+    {id:"pl",name:"Plank / Ab Wheel",badge:"Accessory",note:"Plank 3×30–45s. Ab wheel 3×8–10",p1:"3×30s plank",p2:"3×10 ab wheel",rest:"30 sec"},
+  ]}
+};
+
+const WEEK_DATA = {
+  1:{phase:"Accumulation",label:"Foundation",sets:"4",reps:"6",load:"~75–78% e1RM",rpe:"RPE 7–8",note:"Focus entirely on technique. Err lighter rather than heavier. Establish your working weights — these become the benchmark."},
+  2:{phase:"Accumulation",label:"Settle In",sets:"4",reps:"6",load:"~78–80% e1RM",rpe:"RPE 8",note:"Add 2.5–5 kg to any lift where all reps were completed comfortably in Week 1. Maintain strict form."},
+  3:{phase:"Accumulation",label:"Peak Volume",sets:"4",reps:"6–8",load:"~80% e1RM",rpe:"RPE 8",note:"Highest volume week of Phase 1. You may feel fatigued — that is expected. Control the reps, keep technique honest."},
+  4:{phase:"Deload",label:"Recovery",sets:"2",reps:"5",load:"60% of working weight",rpe:"RPE 5–6",note:"Mandatory deload. All compounds: 2×5 at 60% only. Keep accessories light. The adaptation from Phase 1 happens NOW."},
+  5:{phase:"Intensification",label:"Load Entry",sets:"4–5",reps:"4–5",load:"~82–85% e1RM",rpe:"RPE 8",note:"Transition to heavier loads and lower reps. You should feel stronger coming out of the deload."},
+  6:{phase:"Intensification",label:"Drive",sets:"5",reps:"3–4",load:"~85–87% e1RM",rpe:"RPE 8–9",note:"Heaviest sustained training week. CNS demand is high — prioritise sleep and nutrition."},
+  7:{phase:"Intensification",label:"Peak",sets:"5",reps:"3",load:"~87–90% e1RM",rpe:"RPE 9",note:"Final heavy week. Reduce accessories to one set each to save energy for primary lifts."},
+  8:{phase:"Test Week",label:"★ Retest",sets:"—",reps:"3–5RM test",load:"Testing protocol",rpe:"RPE 9+",note:"Do not train heavy Mon/Tue. Test Squat & Chest Press on Wed. Rest Thu. Deadlift Fri. Compare all e1RMs to Week 1."},
+};
+
+const phaseCol = w => w===4?C.blue:w<=3?C.blue:w===8?C.yellow:C.red;
+const phaseTextCol = w => w===8?C.black:"#fff";
+
+const st = {
+  card:(accent,extra)=>({background:C.panel,border:`1px solid ${C.border}`,borderLeft:accent?`4px solid ${accent}`:`1px solid ${C.border}`,borderRadius:3,padding:18,marginBottom:14,...extra}),
+  h2:{fontSize:22,fontWeight:800,textTransform:"uppercase",color:C.chalk,marginBottom:14,marginTop:0},
+  h3:{fontSize:15,fontWeight:700,textTransform:"uppercase",color:C.chalk,marginBottom:8,marginTop:0},
+  label:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:C.yellow,marginBottom:4},
+  p:{color:"#aaa",marginBottom:10,lineHeight:1.6,marginTop:0},
+  th:{fontSize:10,letterSpacing:2,textTransform:"uppercase",color:C.iron,padding:"7px 8px",textAlign:"left",borderBottom:`1px solid ${C.border}`},
+  td:{padding:"9px 8px",borderBottom:`1px solid ${C.border}`,verticalAlign:"top"},
+  input:{background:C.dark,border:`1px solid ${C.border}`,color:C.chalk,fontSize:13,padding:"4px 7px",width:68,borderRadius:2,textAlign:"right"},
+  select:{background:C.dark,border:`1px solid ${C.border}`,color:C.chalk,fontSize:13,padding:"4px 5px",borderRadius:2,width:62},
+  textarea:{width:"100%",background:C.dark,border:`1px solid ${C.border}`,color:C.chalk,fontSize:13,padding:10,borderRadius:2,resize:"vertical",minHeight:75,marginTop:6},
+  btn:(outline)=>({background:outline?"transparent":C.yellow,color:outline?C.chalk:C.black,border:outline?`1px solid ${C.border}`:"none",fontWeight:700,fontSize:12,letterSpacing:1.5,textTransform:"uppercase",padding:"9px 18px",borderRadius:2,cursor:"pointer"}),
+  wkBtn:(active,deload)=>({background:active?(deload?C.blue:C.yellow):C.panel,color:active?(deload?"#fff":C.black):C.iron,border:`1px solid ${deload?C.blue:(active?C.yellow:C.border)}`,fontSize:12,fontWeight:700,padding:"6px 10px",borderRadius:2,cursor:"pointer"}),
+  sesBtn:(active,col)=>({background:active?(col||C.yellow):C.panel,color:active?(col===C.red||col===C.blue?"#fff":C.black):C.iron,border:`1px solid ${active?(col||C.yellow):C.border}`,fontSize:12,fontWeight:600,textTransform:"uppercase",padding:"7px 13px",borderRadius:2,cursor:"pointer"}),
+  badge:(type)=>({display:"inline-block",fontSize:9,fontWeight:700,letterSpacing:1,textTransform:"uppercase",padding:"2px 5px",borderRadius:2,marginRight:4,background:type==="Primary"?"#1a2a3a":type==="Secondary"?"#1a2413":"#1e1e1e",color:type==="Primary"?C.blue:type==="Secondary"?C.green:C.iron}),
+};
+
+function WkPicker({week,setWeek}){
+  return(
+    <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:18}}>
+      {[1,2,3,4,5,6,7,8].map(w=>(
+        <button key={w} style={st.wkBtn(week===w,w===4)} onClick={()=>setWeek(w)}>
+          {w===4?"Wk 4 ↓":w===8?"Wk 8 ★":`Wk ${w}`}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function DayPicker({day,setDay}){
+  return(
+    <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:18}}>
+      {Object.entries(SESSIONS).map(([k,v])=>(
+        <button key={k} style={st.sesBtn(day===k,v.color)} onClick={()=>setDay(k)}>{v.label}</button>
+      ))}
+    </div>
+  );
+}
+
+function SaveMsg({show}){
+  return show?<div style={{fontSize:12,color:C.green,marginTop:8}}>✓ Saved</div>:null;
+}
+
+// ── OVERVIEW ──
+function Overview(){
+  return(
+    <div>
+      <div style={st.label}>Program Structure</div>
+      <h2 style={st.h2}>How This Works</h2>
+      <p style={st.p}>Three sessions per week on a Push / Pull / Legs split. Each session is 38–42 minutes built around one primary compound lift, two secondary lifts, and one or two accessories. Two 4-week phases: accumulation then intensification.</p>
+      {[
+        {n:1,phase:"Weeks 1–4 · Accumulation",title:"Build the Base",col:C.blue,text:"Higher rep ranges (5–8), moderate loads, strict technique. Groove patterns, accumulate volume, establish working weights. Week 4 is a mandatory deload — 60% of working loads, 2×5 per compound."},
+        {n:2,phase:"Weeks 5–8 · Intensification",title:"Drive the Load",col:C.red,text:"Heavier loads (3–5 reps), lower volume, more CNS demand. Strength peaks here. Week 8 is the retest — compare to Week 1 baselines to measure your gains."}
+      ].map(p=>(
+        <div key={p.n} style={{...st.card(p.col),display:"grid",gridTemplateColumns:"52px 1fr",gap:12}}>
+          <div style={{fontSize:44,fontWeight:900,color:C.border,lineHeight:1}}>{p.n}</div>
+          <div>
+            <span style={{display:"inline-block",fontSize:10,fontWeight:700,letterSpacing:2,textTransform:"uppercase",padding:"2px 8px",borderRadius:2,background:p.col,color:p.n===1?"#fff":C.black,marginBottom:6}}>{p.phase}</span>
+            <h3 style={st.h3}>{p.title}</h3>
+            <p style={{...st.p,marginBottom:0}}>{p.text}</p>
+          </div>
+        </div>
+      ))}
+      <hr style={{border:"none",borderTop:`1px solid ${C.border}`,margin:"20px 0"}}/>
+      <div style={st.label}>Key Principles</div>
+      <h2 style={st.h2}>Rules of the Program</h2>
+      <div style={st.card(C.yellow)}>
+        <h3 style={st.h3}>RPE-Based Loading</h3>
+        <p style={{...st.p,marginBottom:8}}>RPE = Rate of Perceived Exertion. Keeps loading honest on good and bad days.</p>
+        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+          {[["RPE 7","3 reps left","#1a2a3a",C.blue],["RPE 8","2 reps left","#1a2a1a",C.green],["RPE 9","1 rep left","#2a2010","#e08040"],["RPE 10","max effort","#2a1a1a",C.red]].map(([r,l,bg,col])=>(
+            <span key={r} style={{fontSize:11,padding:"3px 8px",borderRadius:2,fontWeight:600,background:bg,color:col}}>{r} — {l}</span>
+          ))}
+        </div>
+      </div>
+      <div style={st.card(C.green)}>
+        <h3 style={st.h3}>Progressive Overload Rule</h3>
+        <p style={{...st.p,marginBottom:0}}>Complete all reps at or below target RPE → add weight next session: <strong>+2.5 kg upper body</strong>, <strong>+5 kg lower body</strong>. Miss reps → repeat same weight.</p>
+      </div>
+      <div style={st.card(C.blue)}>
+        <h3 style={st.h3}>Session Structure (40 min)</h3>
+        <ul style={{paddingLeft:18,color:"#aaa",marginBottom:0}}>
+          <li style={{marginBottom:5}}><strong>Warm-up (5 min)</strong> — 2 ramp sets on primary: 50%×5, 70%×5</li>
+          <li style={{marginBottom:5}}><strong>Primary compound (12–15 min)</strong> — main strength work</li>
+          <li style={{marginBottom:5}}><strong>Secondary lifts (18–20 min)</strong> — 2 exercises, less rest</li>
+          <li><strong>Accessories (5 min)</strong> — 1–2 exercises, high density</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+// ── SESSIONS ──
+function Sessions(){
+  const [day,setDay]=React.useState("A");
+  const sess=SESSIONS[day];
+  return(
+    <div>
+      <div style={st.label}>Training Days</div>
+      <h2 style={st.h2}>Session Plans</h2>
+      <p style={st.p}>Rest 2–3 min between sets on primary lifts, 60–90 sec on accessories.</p>
+      <DayPicker day={day} setDay={setDay}/>
+      <div style={{...st.card(sess.color),marginBottom:16}}>
+        <strong style={{color:sess.color}}>{sess.label}</strong>
+      </div>
+      <div style={{overflowX:"auto"}}>
+        <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+          <thead>
+            <tr>
+              <th style={st.th}>Exercise</th>
+              <th style={st.th}>Phase 1 (Wk 1–3)</th>
+              <th style={st.th}>Phase 2 (Wk 5–7)</th>
+              <th style={st.th}>Rest</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sess.exercises.map(ex=>(
+              <tr key={ex.id}>
+                <td style={st.td}>
+                  <span style={st.badge(ex.badge)}>{ex.badge}</span>
+                  <div style={{fontWeight:600,color:C.chalk,marginTop:2}}>{ex.name}</div>
+                  <div style={{fontSize:11,color:C.iron,marginTop:2}}>{ex.note}</div>
+                </td>
+                <td style={{...st.td,color:C.chalk}}>{ex.p1}</td>
+                <td style={{...st.td,color:C.chalk}}>{ex.p2}</td>
+                <td style={{...st.td,color:C.iron,fontSize:12}}>{ex.rest}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ── PROGRESSION ──
+function Progression(){
+  const [week,setWeek]=React.useState(1);
+  const d=WEEK_DATA[week];
+  const pc=phaseCol(week);
+  return(
+    <div>
+      <div style={st.label}>Week by Week</div>
+      <h2 style={st.h2}>Progression Map</h2>
+      <p style={st.p}>Select a week to see the loading prescription.</p>
+      <WkPicker week={week} setWeek={setWeek}/>
+      <div style={st.card(pc)}>
+        <span style={{display:"inline-block",fontSize:10,fontWeight:700,letterSpacing:2,textTransform:"uppercase",padding:"2px 8px",borderRadius:2,background:pc,color:phaseTextCol(week),marginBottom:8}}>{d.phase} · Week {week}</span>
+        <h3 style={st.h3}>{d.label}</h3>
+        <div style={{overflowX:"auto"}}>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:13,marginTop:10}}>
+            <thead><tr>
+              <th style={st.th}>Sets</th><th style={st.th}>Reps</th><th style={st.th}>Load</th><th style={st.th}>Target RPE</th>
+            </tr></thead>
+            <tbody><tr>
+              <td style={{...st.td,fontWeight:600,color:C.chalk}}>{d.sets}</td>
+              <td style={{...st.td,fontWeight:600,color:C.chalk}}>{d.reps}</td>
+              <td style={{...st.td,color:C.chalk}}>{d.load}</td>
+              <td style={{...st.td,fontWeight:600,color:C.yellow}}>{d.rpe}</td>
+            </tr></tbody>
+          </table>
+        </div>
+        <p style={{...st.p,marginTop:12,marginBottom:0,fontSize:13}}>{d.note}</p>
+      </div>
+      <hr style={{border:"none",borderTop:`1px solid ${C.border}`,margin:"20px 0"}}/>
+      <div style={st.label}>Load Management</div>
+      <h2 style={st.h2}>Deload & Recovery</h2>
+      <div style={st.card(C.blue)}>
+        <h3 style={st.h3}>Week 4 — Planned Deload</h3>
+        <p style={{...st.p,marginBottom:0}}>Reduce all compound lifts to 60% of working weight. Perform 2 sets of 5 reps only. Keep accessories light. This is mandatory — the deload drives adaptation from Phase 1 and primes you for Phase 2.</p>
+      </div>
+      <div style={st.card()}>
+        <h3 style={st.h3}>Auto-Regulation Rule</h3>
+        <p style={{...st.p,marginBottom:0}}>If you're feeling beaten up (poor sleep, illness, high stress), drop all working loads by 10% that session. Don't push through on a bad day.</p>
+      </div>
+    </div>
+  );
+}
+
+// ── TESTING ──
+function Testing(){
+  const steps=[
+    {n:1,title:"Day Before: Rest",text:"Do not train the day before testing. 8+ hours sleep. Eat normally."},
+    {n:2,title:"10-Minute Warm-Up",text:"5 min light cardio. For each lift: bar×10, 40%×5, 60%×3, 75%×2, 85%×1 (estimated). Rest 2 min between ramp sets."},
+    {n:3,title:"Working Attempt: 3–5RM",text:"Select a weight you can lift 3–5 times with excellent form. Stop one rep before failure. Record weight and reps. Rest 5 min. If you got 6+ reps, add weight and repeat."},
+    {n:4,title:"Calculate e1RM",text:"Apply: e1RM = weight × (36 ÷ (37 − reps)). Example: 100 kg × 4 reps → 100 × (36/33) = 109 kg."},
+    {n:5,title:"Test All Three Lifts",text:"Squat, Chest Press Machine, and Deadlift — either in one session (10 min rest between) or across two days (Squat/Chest Press one day, Deadlift next)."},
+    {n:6,title:"Log and Compare",text:"Record results in My Lifts tab. Compare Week 8 e1RM to Week 1. A well-executed 8-week program should produce 5–15% gains on primary lifts."},
+  ];
+  return(
+    <div>
+      <div style={st.label}>Measuring Progress</div>
+      <h2 style={st.h2}>Strength Assessment Protocol</h2>
+      <p style={st.p}>Run this protocol at the <strong>start of Week 1</strong> (baseline) and at the <strong>end of Week 8</strong> (retest). Always a 3–5RM effort — never a true single.</p>
+      <div style={st.card(C.yellow)}>
+        <h3 style={st.h3}>What You're Measuring</h3>
+        <p style={{...st.p,marginBottom:0}}>Estimated 1-rep max (e1RM) via the Brzycki formula: <em>e1RM = weight × (36 / (37 − reps))</em>. Safer than a true max and equally informative.</p>
+      </div>
+      <div style={{display:"grid",gap:10}}>
+        {steps.map(step=>(
+          <div key={step.n} style={{display:"grid",gridTemplateColumns:"38px 1fr",gap:10,alignItems:"start"}}>
+            <div style={{width:38,height:38,background:C.yellow,color:C.black,fontSize:18,fontWeight:900,display:"flex",alignItems:"center",justifyContent:"center",borderRadius:2,flexShrink:0}}>{step.n}</div>
+            <div style={{...st.card(),marginBottom:0}}>
+              <h3 style={{...st.h3,marginBottom:4}}>{step.title}</h3>
+              <p style={{...st.p,marginBottom:0,fontSize:13}}>{step.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <hr style={{border:"none",borderTop:`1px solid ${C.border}`,margin:"20px 0"}}/>
+      <div style={st.card()}>
+        <h3 style={st.h3}>Secondary Indicators</h3>
+        <ul style={{paddingLeft:18,color:"#aaa",marginBottom:0}}>
+          <li style={{marginBottom:5}}><strong>Working weight increases</strong> — how many times did you add load over 8 weeks?</li>
+          <li style={{marginBottom:5}}><strong>Rep quality</strong> — are reps faster and more controlled at the same weight?</li>
+          <li style={{marginBottom:5}}><strong>Session RPE</strong> — does a weight that was RPE 8 in Week 1 feel like RPE 7 in Week 7?</li>
+          <li><strong>Pull-up reps</strong> — track max unweighted reps at Week 1 and Week 8.</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+// ── MY LIFTS ──
+function MyLifts(){
+  const [vals,setVals]=React.useState({sqW1:"",sqW8:"",cpW1:"",cpW8:"",dlW1:"",dlW8:"",puW1:"",puW8:""});
+  const [cw,setCw]=React.useState(""); const [cr,setCr]=React.useState(""); const [e1rm,setE1rm]=React.useState("—");
+
+  React.useEffect(()=>{
+    try{const s=JSON.parse(localStorage.getItem("sp8_lifts")||"{}");if(Object.keys(s).length)setVals(s);}catch(e){}
+  },[]);
+
+  const setV=(k,v)=>setVals(p=>({...p,[k]:v}));
+  const gain=(w1,w8)=>{
+    const v1=parseFloat(w1),v8=parseFloat(w8);
+    if(isNaN(v1)||isNaN(v8)||v1===0)return{text:"—",col:C.green};
+    const d=v8-v1,p=((d/v1)*100).toFixed(1);
+    return{text:`${d>=0?"+":""}${d} (${p}%)`,col:d>=0?C.green:C.red};
+  };
+  const calc=()=>{
+    const w=parseFloat(cw),r=parseInt(cr);
+    if(isNaN(w)||isNaN(r)||r<1||r>10){setE1rm("—");return;}
+    setE1rm((w*(36/(37-r))).toFixed(1)+" kg");
+  };
+  const save=()=>{try{localStorage.setItem("sp8_lifts",JSON.stringify(vals));}catch(e){}};
+
+  const lifts=[
+    {label:"🏋 Squat",k1:"sqW1",k8:"sqW8"},
+    {label:"💪 Chest Press Machine",k1:"cpW1",k8:"cpW8"},
+    {label:"🔩 Deadlift",k1:"dlW1",k8:"dlW8"},
+    {label:"↑ Pull-Ups (reps)",k1:"puW1",k8:"puW8"},
+  ];
+
+  return(
+    <div>
+      <div style={st.label}>Personal Records</div>
+      <h2 style={st.h2}>My Lift Log</h2>
+      <p style={st.p}>Record your Week 1 baseline and Week 8 retest e1RMs here. Tap Save to store them.</p>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:16}}>
+        {lifts.map(l=>{
+          const g=gain(vals[l.k1],vals[l.k8]);
+          return(
+            <div key={l.k1} style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:3,padding:14}}>
+              <div style={{fontSize:11,fontWeight:700,letterSpacing:1,textTransform:"uppercase",color:C.iron,marginBottom:10}}>{l.label}</div>
+              {[{lbl:"Week 1",k:l.k1},{lbl:"Week 8",k:l.k8}].map(row=>(
+                <div key={row.k} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 0",borderBottom:`1px solid ${C.border}`}}>
+                  <span style={{fontSize:12,color:C.iron}}>{row.lbl}</span>
+                  <input style={st.input} type="number" value={vals[row.k]} onChange={e=>setV(row.k,e.target.value)} placeholder="—"/>
+                </div>
+              ))}
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 0"}}>
+                <span style={{fontSize:12,color:C.iron}}>Gain</span>
+                <span style={{fontWeight:700,color:g.col}}>{g.text}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div style={st.card()}>
+        <h3 style={st.h3}>e1RM Calculator</h3>
+        <div style={{display:"flex",gap:10,flexWrap:"wrap",alignItems:"flex-end",marginTop:8}}>
+          <div>
+            <div style={{fontSize:10,color:C.iron,textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Weight (kg)</div>
+            <input style={{...st.input,width:88}} type="number" value={cw} onChange={e=>setCw(e.target.value)} placeholder="100"/>
+          </div>
+          <div>
+            <div style={{fontSize:10,color:C.iron,textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Reps</div>
+            <input style={{...st.input,width:60}} type="number" value={cr} onChange={e=>setCr(e.target.value)} placeholder="4"/>
+          </div>
+          <button style={st.btn()} onClick={calc}>Calculate</button>
+          <span style={{fontSize:22,fontWeight:900,color:C.yellow}}>{e1rm}</span>
+        </div>
+      </div>
+      <div style={{display:"flex",gap:10,marginTop:16}}>
+        <button style={st.btn()} onClick={save}>Save to Device</button>
+      </div>
+    </div>
+  );
+}
+
+// ── SESSION LOG ──
+function SessionLog(){
+  const [week,setWeek]=React.useState(1);
+  const [day,setDay]=React.useState("A");
+  const [data,setData]=React.useState({});
+  const [notes,setNotes]=React.useState({});
+  const [saved,setSaved]=React.useState(false);
+
+  React.useEffect(()=>{
+    try{
+      const d=JSON.parse(localStorage.getItem("sp8_log")||"{}");
+      const n=JSON.parse(localStorage.getItem("sp8_notes")||"{}");
+      if(Object.keys(d).length)setData(d);
+      if(Object.keys(n).length)setNotes(n);
+    }catch(e){}
+  },[]);
+
+  const key=(w,d,id,t)=>`${w}_${d}_${id}_${t}`;
+  const nKey=(w,d)=>`${w}_${d}`;
+  const getV=(id,t)=>data[key(week,day,id,t)]||"";
+  const setV=(id,t,v)=>setData(p=>({...p,[key(week,day,id,t)]:v}));
+  const getN=()=>notes[nKey(week,day)]||"";
+  const setN=(v)=>setNotes(p=>({...p,[nKey(week,day)]:v}));
+
+  const sess=SESSIONS[day];
+  const isP1=week<=3; const isDeload=week===4; const isTest=week===8;
+  const getTarget=ex=>{
+    if(isDeload)return ex.badge==="Primary"?"2×5 @ 60%":ex.badge==="Secondary"?"Light 2×8":"Light";
+    if(isTest&&ex.badge==="Primary")return"3–5RM Test";
+    return isP1?ex.p1:ex.p2;
+  };
+
+  const save=()=>{
+    try{
+      localStorage.setItem("sp8_log",JSON.stringify(data));
+      localStorage.setItem("sp8_notes",JSON.stringify(notes));
+    }catch(e){}
+    setSaved(true); setTimeout(()=>setSaved(false),2000);
+  };
+
+  const primaries=[{day:"A",id:"cp",name:"Chest Press"},{day:"B",id:"dl",name:"Deadlift"},{day:"C",id:"sq",name:"Squat"}];
+
+  return(
+    <div>
+      <div style={st.label}>Training Diary</div>
+      <h2 style={st.h2}>Session Log</h2>
+      <p style={st.p}>Select a week and session, then log your weights. Tap Save to store to device.</p>
+      <div style={{marginBottom:6,...st.label}}>Week</div>
+      <WkPicker week={week} setWeek={setWeek}/>
+      <div style={{marginBottom:6,...st.label}}>Session</div>
+      <DayPicker day={day} setDay={setDay}/>
+      <div style={{...st.card(sess.color),marginBottom:16,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:8}}>
+        <strong style={{color:sess.color,fontSize:14}}>Week {week} · {sess.label}</strong>
+        <span style={{fontSize:10,fontWeight:700,letterSpacing:2,textTransform:"uppercase",padding:"2px 8px",borderRadius:2,background:phaseCol(week),color:phaseTextCol(week)}}>{WEEK_DATA[week].phase}</span>
+      </div>
+      <div style={{overflowX:"auto"}}>
+        <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+          <thead><tr>
+            <th style={st.th}>Exercise</th>
+            <th style={st.th}>Target</th>
+            <th style={st.th}>kg</th>
+            <th style={st.th}>Reps</th>
+            <th style={st.th}>RPE</th>
+          </tr></thead>
+          <tbody>
+            {sess.exercises.map(ex=>(
+              <tr key={ex.id}>
+                <td style={st.td}>
+                  <span style={st.badge(ex.badge)}>{ex.badge}</span>
+                  <div style={{fontWeight:600,color:C.chalk,marginTop:2,fontSize:13}}>{ex.name}</div>
+                </td>
+                <td style={{...st.td,color:C.iron,fontSize:12}}>{getTarget(ex)}</td>
+                <td style={st.td}><input style={st.input} type="number" value={getV(ex.id,"w")} onChange={e=>setV(ex.id,"w",e.target.value)} placeholder="—"/></td>
+                <td style={st.td}><input style={{...st.input,width:54}} type="number" value={getV(ex.id,"r")} onChange={e=>setV(ex.id,"r",e.target.value)} placeholder="—"/></td>
+                <td style={st.td}>
+                  <select style={st.select} value={getV(ex.id,"e")} onChange={e=>setV(ex.id,"e",e.target.value)}>
+                    <option value="">—</option>
+                    {[6,7,8,9,10].map(n=><option key={n} value={n}>{n}</option>)}
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div style={{...st.card(),marginTop:14}}>
+        <h3 style={st.h3}>Session Notes</h3>
+        <textarea style={st.textarea} value={getN()} onChange={e=>setN(e.target.value)} placeholder="How did it feel? Any technique notes, niggles, observations..."/>
+      </div>
+      <div style={{display:"flex",gap:10,marginTop:16}}>
+        <button style={st.btn()} onClick={save}>Save to Device</button>
+      </div>
+      <SaveMsg show={saved}/>
+      <hr style={{border:"none",borderTop:`1px solid ${C.border}`,margin:"22px 0"}}/>
+      <div style={st.label}>Progress at a Glance</div>
+      <h2 style={st.h2}>Primary Lifts Overview</h2>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
+        {primaries.map(p=>(
+          <div key={p.id} style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:3,padding:12}}>
+            <div style={{fontSize:11,fontWeight:700,letterSpacing:1,textTransform:"uppercase",color:C.iron,marginBottom:8}}>{p.name}</div>
+            {[1,2,3,4,5,6,7,8].map(w=>{
+              const v=data[key(w,p.day,p.id,"w")];
+              const r=data[key(w,p.day,p.id,"r")];
+              return(
+                <div key={w} style={{display:"flex",justifyContent:"space-between",padding:"3px 0",borderBottom:`1px solid ${C.border}`,fontSize:11}}>
+                  <span style={{color:C.iron}}>W{w}</span>
+                  <span style={{color:v?C.chalk:C.border,fontWeight:v?600:400}}>{v?`${v}kg${r?" ×"+r:""}` : "—"}</span>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── APP ──
+const TABS=[
+  {id:"overview",label:"Overview",comp:Overview},
+  {id:"sessions",label:"Sessions",comp:Sessions},
+  {id:"progression",label:"Progression",comp:Progression},
+  {id:"testing",label:"Testing",comp:Testing},
+  {id:"mylifts",label:"My Lifts",comp:MyLifts},
+  {id:"log",label:"Session Log",comp:SessionLog},
+];
+
+function App(){
+  const [tab,setTab]=React.useState("overview");
+  const Active=TABS.find(t=>t.id===tab).comp;
+  return(
+    <div style={{background:C.black,color:C.chalk,fontFamily:"system-ui,-apple-system,sans-serif",minHeight:"100vh",fontSize:15}}>
+      <div style={{background:C.dark,borderBottom:`3px solid ${C.yellow}`,padding:"22px 14px 14px",textAlign:"center"}}>
+        <div style={{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:C.yellow,marginBottom:5}}>Intermediate · 3 Days / Week · Full Gym</div>
+        <h1 style={{fontSize:"clamp(26px,6vw,48px)",fontWeight:900,letterSpacing:-1,lineHeight:1,textTransform:"uppercase",margin:0}}>
+          <span style={{color:C.yellow}}>8-Week</span> Strength Program
+        </h1>
+        <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:10,flexWrap:"wrap"}}>
+          {["40 min sessions","Push / Pull / Legs","Wave Progression","1RM Testing"].map(t=>(
+            <span key={t} style={{fontSize:10,background:C.panel,border:`1px solid ${C.border}`,padding:"3px 9px",borderRadius:2,color:C.iron,textTransform:"uppercase",letterSpacing:1}}>{t}</span>
+          ))}
+        </div>
+      </div>
+      <div style={{display:"flex",background:C.dark,borderBottom:`1px solid ${C.border}`,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
+        {TABS.map(t=>(
+          <button key={t.id} onClick={()=>setTab(t.id)} style={{flex:"0 0 auto",background:"none",border:"none",color:tab===t.id?C.yellow:C.iron,fontSize:13,fontWeight:600,letterSpacing:1.5,textTransform:"uppercase",padding:"13px 14px",cursor:"pointer",borderBottom:`3px solid ${tab===t.id?C.yellow:"transparent"}`,whiteSpace:"nowrap"}}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+      <div style={{maxWidth:860,margin:"0 auto",padding:"22px 14px 60px"}}>
+        <Active/>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
