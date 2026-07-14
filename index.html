@@ -27,26 +27,19 @@ const C = {
 };
 
 const SESSIONS = {
-  A:{label:"Day A — Push",color:C.yellow,exercises:[
+  A:{label:"Day 1 — Squat Focus",color:C.yellow,exercises:[
+    {id:"sq",name:"Barbell Back Squat",badge:"Primary",note:"High bar · depth to parallel or below · brace hard",p1:"4×6 @ RPE 8",p2:"5×3 @ RPE 8–9",rest:"3 min"},
     {id:"cp",name:"Seated Chest Press Machine",badge:"Primary",note:"Set seat so handles align mid-chest · full ROM · controlled return",p1:"4×6 @ RPE 8",p2:"5×3 @ RPE 8–9",rest:"2–3 min"},
-    {id:"sp",name:"Shoulder Press Machine",badge:"Secondary",note:"Seated · handles aligned with shoulders · controlled return",p1:"3×8 @ RPE 7",p2:"4×5 @ RPE 8",rest:"90 sec"},
-    {id:"idp",name:"Incline Dumbbell Press",badge:"Secondary",note:"30–45° incline",p1:"3×10 @ RPE 7",p2:"3×8 @ RPE 8",rest:"60 sec"},
+    {id:"br",name:"Barbell Bent-Over Row",badge:"Secondary",note:"Overhand · brace · controlled eccentric",p1:"3×8 @ RPE 7",p2:"3×6 @ RPE 8",rest:"90 sec"},
+    {id:"rdl",name:"Romanian Deadlift",badge:"Secondary",note:"Hip hinge · slight knee bend · feel hamstring stretch",p1:"3×10 @ RPE 7",p2:"3×8 @ RPE 8",rest:"90 sec"},
     {id:"tp",name:"Cable Tricep Pushdown",badge:"Accessory",note:"Rope or bar · full extension",p1:"3×12",p2:"3×10",rest:"60 sec"},
-    {id:"lr",name:"Lateral Raise",badge:"Accessory",note:"Strict · no momentum",p1:"3×15",p2:"3×12",rest:"45 sec"},
   ]},
-  B:{label:"Day B — Pull",color:C.blue,exercises:[
+  B:{label:"Day 2 — Deadlift Focus",color:C.blue,exercises:[
     {id:"dl",name:"Barbell Deadlift",badge:"Primary",note:"Conventional · brace · drive floor away",p1:"4×5 @ RPE 8",p2:"5×3 @ RPE 8–9",rest:"3 min"},
-    {id:"br",name:"Barbell Bent-Over Row",badge:"Secondary",note:"Overhand · chest supported optional",p1:"4×8 @ RPE 7",p2:"4×6 @ RPE 8",rest:"90 sec"},
+    {id:"sp",name:"Shoulder Press Machine",badge:"Primary",note:"Seated · handles aligned with shoulders · controlled return",p1:"3×8 @ RPE 7",p2:"4×5 @ RPE 8",rest:"2 min"},
     {id:"pu",name:"Pull-Up / Lat Pulldown",badge:"Secondary",note:"Full hang → chin over bar. Use pulldown if <6 pull-ups",p1:"3×6–8",p2:"4×5–6",rest:"90 sec"},
-    {id:"fp",name:"Cable Face Pull",badge:"Accessory",note:"High anchor · external rotation",p1:"3×15",p2:"3×12",rest:"45 sec"},
-    {id:"cu",name:"Barbell / DB Curl",badge:"Accessory",note:"Controlled eccentric",p1:"3×12",p2:"3×10",rest:"45 sec"},
-  ]},
-  C:{label:"Day C — Legs",color:C.red,exercises:[
-    {id:"sq",name:"Barbell Back Squat",badge:"Primary",note:"High bar · depth to parallel or below",p1:"4×6 @ RPE 8",p2:"5×3 @ RPE 8–9",rest:"3 min"},
-    {id:"rdl",name:"Romanian Deadlift",badge:"Secondary",note:"Hip hinge · slight knee bend · feel hamstring",p1:"3×10 @ RPE 7",p2:"4×8 @ RPE 8",rest:"90 sec"},
-    {id:"bss",name:"Bulgarian Split Squat",badge:"Secondary",note:"Dumbbell · rear foot elevated",p1:"3×10 each",p2:"3×8 each",rest:"90 sec"},
-    {id:"lc",name:"Leg Curl (Machine)",badge:"Accessory",note:"Slow eccentric (3 sec down)",p1:"3×12",p2:"3×10",rest:"60 sec"},
-    {id:"pl",name:"Plank / Ab Wheel",badge:"Accessory",note:"Plank 3×30–45s. Ab wheel 3×8–10",p1:"3×30s plank",p2:"3×10 ab wheel",rest:"30 sec"},
+    {id:"bss",name:"Bulgarian Split Squat",badge:"Secondary",note:"Dumbbell · rear foot elevated · each side",p1:"3×10 each",p2:"3×8 each",rest:"90 sec"},
+    {id:"lr",name:"Lateral Raise",badge:"Accessory",note:"Strict · no momentum",p1:"3×15",p2:"3×12",rest:"45 sec"},
   ]}
 };
 
@@ -58,7 +51,7 @@ const WEEK_DATA = {
   5:{phase:"Intensification",label:"Load Entry",sets:"4–5",reps:"4–5",load:"~82–85% e1RM",rpe:"RPE 8",note:"Transition to heavier loads and lower reps. You should feel stronger coming out of the deload."},
   6:{phase:"Intensification",label:"Drive",sets:"5",reps:"3–4",load:"~85–87% e1RM",rpe:"RPE 8–9",note:"Heaviest sustained training week. CNS demand is high — prioritise sleep and nutrition."},
   7:{phase:"Intensification",label:"Peak",sets:"5",reps:"3",load:"~87–90% e1RM",rpe:"RPE 9",note:"Final heavy week. Reduce accessories to one set each to save energy for primary lifts."},
-  8:{phase:"Test Week",label:"★ Retest",sets:"—",reps:"3–5RM test",load:"Testing protocol",rpe:"RPE 9+",note:"Do not train heavy Mon/Tue. Test Squat & Chest Press on Wed. Rest Thu. Deadlift Fri. Compare all e1RMs to Week 1."},
+  8:{phase:"Test Week",label:"★ Retest",sets:"—",reps:"3–5RM test",load:"Testing protocol",rpe:"RPE 9+",note:"Rest 2 days before testing. Session 1: test Squat then Chest Press (10 min rest between). Rest 2 days. Session 2: test Deadlift. Compare all e1RMs to Week 1."},
 };
 
 const phaseCol = w => w===4?C.blue:w<=3?C.blue:w===8?C.yellow:C.red;
@@ -113,7 +106,7 @@ function Overview(){
     <div>
       <div style={st.label}>Program Structure</div>
       <h2 style={st.h2}>How This Works</h2>
-      <p style={st.p}>Three sessions per week on a Push / Pull / Legs split. Each session is 38–42 minutes built around one primary compound lift, two secondary lifts, and one or two accessories. Two 4-week phases: accumulation then intensification.</p>
+      <p style={st.p}>Two full-body sessions per week, each hitting every major movement pattern: squat, hinge, push, and pull. Sessions run 50–55 minutes with two primary lifts per session. Two 4-week phases: accumulation then intensification.</p>
       {[
         {n:1,phase:"Weeks 1–4 · Accumulation",title:"Build the Base",col:C.blue,text:"Higher rep ranges (5–8), moderate loads, strict technique. Groove patterns, accumulate volume, establish working weights. Week 4 is a mandatory deload — 60% of working loads, 2×5 per compound."},
         {n:2,phase:"Weeks 5–8 · Intensification",title:"Drive the Load",col:C.red,text:"Heavier loads (3–5 reps), lower volume, more CNS demand. Strength peaks here. Week 8 is the retest — compare to Week 1 baselines to measure your gains."}
@@ -146,9 +139,9 @@ function Overview(){
       <div style={st.card(C.blue)}>
         <h3 style={st.h3}>Session Structure (40 min)</h3>
         <ul style={{paddingLeft:18,color:"#aaa",marginBottom:0}}>
-          <li style={{marginBottom:5}}><strong>Warm-up (5 min)</strong> — 2 ramp sets on primary: 50%×5, 70%×5</li>
-          <li style={{marginBottom:5}}><strong>Primary compound (12–15 min)</strong> — main strength work</li>
-          <li style={{marginBottom:5}}><strong>Secondary lifts (18–20 min)</strong> — 2 exercises, less rest</li>
+          <li style={{marginBottom:5}}><strong>Warm-up (5 min)</strong> — 2 ramp sets on each primary lift: 50%×5, 70%×5</li>
+          <li style={{marginBottom:5}}><strong>Two primary lifts (20–25 min)</strong> — main strength work, rest 2–3 min between sets</li>
+          <li style={{marginBottom:5}}><strong>Secondary lifts (15–18 min)</strong> — 2 exercises, 90 sec rest</li>
           <li><strong>Accessories (5 min)</strong> — 1–2 exercises, high density</li>
         </ul>
       </div>
@@ -250,7 +243,7 @@ function Testing(){
     {n:2,title:"10-Minute Warm-Up",text:"5 min light cardio. For each lift: bar×10, 40%×5, 60%×3, 75%×2, 85%×1 (estimated). Rest 2 min between ramp sets."},
     {n:3,title:"Working Attempt: 3–5RM",text:"Select a weight you can lift 3–5 times with excellent form. Stop one rep before failure. Record weight and reps. Rest 5 min. If you got 6+ reps, add weight and repeat."},
     {n:4,title:"Calculate e1RM",text:"Apply: e1RM = weight × (36 ÷ (37 − reps)). Example: 100 kg × 4 reps → 100 × (36/33) = 109 kg."},
-    {n:5,title:"Test All Three Lifts",text:"Squat, Chest Press Machine, and Deadlift — either in one session (10 min rest between) or across two days (Squat/Chest Press one day, Deadlift next)."},
+    {n:5,title:"Test All Three Lifts",text:"Squat, Chest Press Machine, and Deadlift — spread across your two sessions: Day 1 test Squat and Chest Press, Day 2 test Deadlift."},
     {n:6,title:"Log and Compare",text:"Record results in My Lifts tab. Compare Week 8 e1RM to Week 1. A well-executed 8-week program should produce 5–15% gains on primary lifts."},
   ];
   return(
@@ -404,7 +397,7 @@ function SessionLog(){
     setSaved(true); setTimeout(()=>setSaved(false),2000);
   };
 
-  const primaries=[{day:"A",id:"cp",name:"Chest Press"},{day:"B",id:"dl",name:"Deadlift"},{day:"C",id:"sq",name:"Squat"}];
+  const primaries=[{day:"A",id:"sq",name:"Squat"},{day:"A",id:"cp",name:"Chest Press"},{day:"B",id:"dl",name:"Deadlift"}];
 
   return(
     <div>
@@ -497,12 +490,12 @@ function App(){
   return(
     <div style={{background:C.black,color:C.chalk,fontFamily:"system-ui,-apple-system,sans-serif",minHeight:"100vh",fontSize:15}}>
       <div style={{background:C.dark,borderBottom:`3px solid ${C.yellow}`,padding:"22px 14px 14px",textAlign:"center"}}>
-        <div style={{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:C.yellow,marginBottom:5}}>Intermediate · 3 Days / Week · Full Gym</div>
+        <div style={{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:C.yellow,marginBottom:5}}>Intermediate · 2 Days / Week · Full Gym</div>
         <h1 style={{fontSize:"clamp(26px,6vw,48px)",fontWeight:900,letterSpacing:-1,lineHeight:1,textTransform:"uppercase",margin:0}}>
           <span style={{color:C.yellow}}>8-Week</span> Strength Program
         </h1>
         <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:10,flexWrap:"wrap"}}>
-          {["40 min sessions","Push / Pull / Legs","Wave Progression","1RM Testing"].map(t=>(
+          {["40 min sessions","Full Body · 2 Days","Wave Progression","1RM Testing"].map(t=>(
             <span key={t} style={{fontSize:10,background:C.panel,border:`1px solid ${C.border}`,padding:"3px 9px",borderRadius:2,color:C.iron,textTransform:"uppercase",letterSpacing:1}}>{t}</span>
           ))}
         </div>
